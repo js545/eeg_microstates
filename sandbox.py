@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+from sklearn.cluster import KMeans
 
 n_timepoints = 500
 
@@ -26,8 +27,12 @@ for col in range(df.shape[0]):
     plt.plot(np.arange(df.shape[1]), df.iloc[col], alpha=.1)
 
 plt.plot(np.arange(df.shape[1]), SS_vect)
-plt.savefig('/Users/jakeson/Desktop/eeg_gfp_500ms.png', dpi=600)
+# plt.savefig('/Users/jakeson/Desktop/eeg_gfp_500ms.png', dpi=600)
 plt.show()
 
 # Next steps
 # https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5671986/
+
+# TODO First order derivative of global field power (GFP)
+# TODO Identify local maxima along GFP
+# TODO 
