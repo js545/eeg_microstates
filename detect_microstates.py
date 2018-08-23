@@ -4,9 +4,9 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from sklearn.cluster import KMeans
 
-n_timepoints = 10000
+n_timepoints = 100000
 
-df = pd.read_csv('RestingState_data.csv', header=None, usecols=np.arange(n_timepoints))
+df = pd.read_csv('RestingState_data.csv', header=None, usecols=np.arange(n_timepoints, n_timepoints + 10000))
 
 SS_vect = []
 
@@ -384,7 +384,17 @@ def kmeans(data, n_maps, n_runs=10, maxerr=1e-6, maxiter=500, doplot=False):
     #return maps, L_, gfp_peaks, gev, cv
     return maps
 
-maps = kmeans(data, n_maps=4, n_runs=10, maxerr=1e-6, maxiter=500, doplot=False)
+
+kmeans_data = []
+
+for item in data:
+
+    kmeans_data.append(item)
+
+kmeans_data = np.array(kmeans_data)
+
+
+maps = kmeans(kmeans_data, n_maps=4, n_runs=10, maxerr=1e-6, maxiter=500, doplot=False)
 
 maps0 = maps[0]
 maps1 = maps[1]
