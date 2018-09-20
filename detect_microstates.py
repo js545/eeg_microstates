@@ -4,7 +4,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from sklearn.cluster import KMeans
 
-n_timepoints = 100000
+n_timepoints = 5000
 
 df = pd.read_csv('RestingState_data.csv', header=None, usecols=np.arange(n_timepoints, n_timepoints + 10000))
 
@@ -387,7 +387,7 @@ def kmeans(data, n_maps, n_runs=10, maxerr=1e-6, maxiter=500, doplot=False):
 
 kmeans_data = []
 
-for item in data:
+for item in data.T:
 
     kmeans_data.append(item)
 
@@ -406,3 +406,130 @@ output_dict = {'A': maps0, 'B': maps1, 'C': maps2, 'D': maps3}
 df = pd.DataFrame.from_dict(output_dict)
 
 df.to_csv('/Users/jakeson/Documents/CMI/eeg_micro/microstates.csv')
+
+
+import numpy as np
+from scipy.signal import butter, lfilter, freqz
+import matplotlib.pyplot as plt
+
+
+def butter_lowpass(cutoff, fs, order=5):
+    nyq = 0.5 * fs
+    normal_cutoff = cutoff / nyq
+    b, a = butter(order, normal_cutoff, btype='low', analog=False)
+    return b, a
+
+
+def butter_lowpass_filter(data, cutoff, fs, order=5):
+    b, a = butter_lowpass(cutoff, fs, order=order)
+    y = lfilter(b, a, data)
+    return y
+
+order = 3
+fs = 500.0
+cutoff = 20
+
+out_maps = []
+
+for item in range(len(maps)):
+
+    y = butter_lowpass_filter(maps[item], cutoff, fs, order)
+    out_maps.append(y)
+
+print(out_maps)
+
+out_maps0 = out_maps[0]
+out_maps1 = out_maps[1]
+out_maps2 = out_maps[2]
+out_maps3 = out_maps[3]
+
+out_output_dict = {'A': out_maps0, 'B': out_maps1, 'C': out_maps2, 'D': out_maps3}
+
+out_df = pd.DataFrame.from_dict(out_output_dict)
+
+filename = '/Users/jakeson/Documents/CMI/eeg_micro/o' + str(order) + '_f' + str(fs) + '_co' + str(cutoff) + '.csv'
+
+out_df.to_csv(filename)
+
+
+# y = butter_lowpass_filter(data, cutoff, fs, order)
+
+########################################################################################################################
+
+order = 6
+fs = 500.0
+cutoff = 20
+
+out_kmeans_data = []
+
+for item in range(len(kmeans_data)):
+
+    y = butter_lowpass_filter(kmeans_data[item], cutoff, fs, order)
+
+    out_kmeans_data.append(y)
+
+out_kmeans_data = np.array(out_kmeans_data)
+
+maps = kmeans(out_kmeans_data, n_maps=4, n_runs=10, maxerr=1e-6, maxiter=500, doplot=False)
+
+maps0 = maps[0]
+maps1 = maps[1]
+maps2 = maps[2]
+maps3 = maps[3]
+
+out_output_dict = {'A': maps0, 'B': maps1, 'C': maps2, 'D': maps3}
+
+out_df = pd.DataFrame.from_dict(out_output_dict)
+
+filename = '/Users/jakeson/Documents/CMI/eeg_micro/o' + str(order) + '_f' + str(fs) + '_co' + str(cutoff) + '.csv'
+
+out_df.to_csv(filename)
+
+
+########################################################################################################################
+
+
+
+
+for order in [3, 6, 10]:
+    for cutoff in [20, 50, 70]:
+
+        out_kmeans_data = []
+
+        for item in range(len(kmeans_data)):
+            y = butter_lowpass_filter(kmeans_data[item], cutoff, fs, order)
+
+            out_kmeans_data.append(y)
+
+        out_kmeans_data = np.array(out_kmeans_data)
+
+        maps = kmeans(out_kmeans_data, n_maps=4, n_runs=10, maxerr=1e-6, maxiter=500, doplot=False)
+
+        maps0 = maps[0]
+        maps1 = maps[1]
+        maps2 = maps[2]
+        maps3 = maps[3]
+
+        out_output_dict = {'A': maps0, 'B': maps1, 'C': maps2, 'D': maps3}
+
+        out_df = pd.DataFrame.from_dict(out_output_dict)
+
+        filename = '/Users/jakeson/Documents/CMI/eeg_micro/o' + str(order) + '_f' + str(fs) + '_co' + str(
+            cutoff) + '.csv'
+
+        out_df.to_csv(filename)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
