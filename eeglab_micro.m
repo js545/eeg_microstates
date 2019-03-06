@@ -20,9 +20,117 @@ cd /home/matlab/Jake/automagic-master
 % automagic.rate
 % automagic.qualityScore
 
+%% Gaussian Test
+
+eeglab
+
+filepath = '/data2/Projects/Jake_matlab/data_20/NDARAA075AMK/results/RestingState/gip_RestingState.mat';
+% filepath = '/data2/Projects/Jake_matlab/data_20_peer/NDARAA117NEJ/results/ThePresent/gip_Video4.mat';
+load(filepath)
+EEG = pop_selectevent( EEG, 'type',{'20'},'deleteevents','on');
+
+[m, n] = size(EEG.data);
+EEG.data = randn(m, n);
+
+for c = 1:n
+
+    [h, val, grid] = topoplot(EEG.data(:, c), EEG.chanlocs, 'noplot', 'on');
+    % csvwrite('/data2/Projects/Jake_matlab/EEG_data.csv', val);
+    
+    EEG.data(:, n) = val;
+    
+end
+
+[ALLEEG, EEG, CURRENTSET] = eeg_store( ALLEEG, EEG, 0);
+eeglab redraw
+
+%% PCA Test
+
+eeglab
+
+filepath = '/data2/Projects/Jake_matlab/data_20/NDARAA075AMK/results/RestingState/gip_RestingState.mat';
+% filepath = '/data2/Projects/Jake_matlab/data_20_peer/NDARAA117NEJ/results/ThePresent/gip_Video4.mat';
+load(filepath)
+EEG = pop_eegfiltnew(EEG, 1, 0);
+EEG = pop_eegfiltnew(EEG, 0, 30);
+EEG = pop_resample(EEG, 125);
+EEG = pop_selectevent( EEG, 'type',{'20'},'deleteevents','on');
+[ALLEEG, EEG, CURRENTSET] = eeg_store( ALLEEG, EEG, 0);
+eeglab redraw
+
+filepath = '/data2/Projects/Jake_matlab/data_20/NDARAA112DMH/results/RestingState/gip_RestingState.mat';
+load(filepath)
+EEG = pop_eegfiltnew(EEG, 1, 0);
+EEG = pop_eegfiltnew(EEG, 0, 30);
+EEG = pop_resample(EEG, 125);
+EEG = pop_selectevent( EEG, 'type',{'20'},'deleteevents','on');
+[ALLEEG, EEG, CURRENTSET] = eeg_store( ALLEEG, EEG, 0);
+eeglab redraw
+
+filepath = '/data2/Projects/Jake_matlab/data_20/NDARAB793GL3/results/RestingState/gip_RestingState.mat';
+load(filepath)
+EEG = pop_eegfiltnew(EEG, 1, 0);
+EEG = pop_eegfiltnew(EEG, 0, 30);
+EEG = pop_resample(EEG, 125);
+EEG = pop_selectevent( EEG, 'type',{'20'},'deleteevents','on');
+[ALLEEG, EEG, CURRENTSET] = eeg_store( ALLEEG, EEG, 0);
+eeglab redraw
+
+filepath = '/data2/Projects/Jake_matlab/data_20/NDARAC350BZ0/results/RestingState/gip_RestingState.mat';
+load(filepath)
+EEG = pop_eegfiltnew(EEG, 1, 0);
+EEG = pop_eegfiltnew(EEG, 0, 30);
+EEG = pop_resample(EEG, 125);
+EEG = pop_selectevent( EEG, 'type',{'20'},'deleteevents','on');
+[ALLEEG, EEG, CURRENTSET] = eeg_store( ALLEEG, EEG, 0);
+eeglab redraw
+
+filepath = '/data2/Projects/Jake_matlab/data_20/NDARAC853DTE/results/RestingState/gip_RestingState.mat';
+load(filepath)
+EEG = pop_eegfiltnew(EEG, 1, 0);
+EEG = pop_eegfiltnew(EEG, 0, 30);
+EEG = pop_resample(EEG, 125);
+EEG = pop_selectevent( EEG, 'type',{'20'},'deleteevents','on');
+[ALLEEG, EEG, CURRENTSET] = eeg_store( ALLEEG, EEG, 0);
+eeglab redraw
+
+num_sub=5;
+
+[EEG, ALLEEG] = pop_micro_selectdata( EEG, ALLEEG, 'datatype', 'spontaneous',...
+'avgref', 1, ...
+'normalise', 1, ... % or 0
+'MinPeakDist', 30, ... % or 30
+'Npeaks', 1000, ... % or 1000
+'GFPthresh', 1, ... % Lower threshold = less data used, since rejection threshold is lower (by standard deviation)
+'dataset_idx', 1:num_sub);
+
+[ALLEEG, EEG] = eeg_store(ALLEEG, EEG, CURRENTSET);
+eeglab redraw
+
+[ALLEEG, EEG, CURRENTSET] = pop_newset(ALLEEG, EEG, i, 'retrieve', num_sub+1, 'study', 0);
+eeglab redraw
+
+EEG_data_pca = pca(EEG.data');
+
+figure;
+topoplot(EEG_data_pca(:, 1), EEG.chanlocs);
+
+figure;
+topoplot(EEG_data_pca(:, 2), EEG.chanlocs);
+
+figure;
+topoplot(EEG_data_pca(:, 3), EEG.chanlocs);
+
+figure;
+topoplot(EEG_data_pca(:, 4), EEG.chanlocs);
+    
 %% Microstate Estimation
 
 eeglab
+
+num_sub = 38;
+
+% TODO: Write function that only loads files that begin with "gip_"
 
 filepath = '/data2/Projects/Jake_matlab/data_20/NDARAA075AMK/results/RestingState/gip_RestingState.mat';
 % filepath = '/data2/Projects/Jake_matlab/data_20_peer/NDARAA117NEJ/results/ThePresent/gip_Video4.mat';
@@ -368,8 +476,6 @@ EEG = pop_selectevent( EEG, 'type',{'20'},'deleteevents','on');
 [ALLEEG, EEG, CURRENTSET] = eeg_store( ALLEEG, EEG, 0);
 eeglab redraw
 
-num_sub = 38;
-
 [EEG, ALLEEG] = pop_micro_selectdata( EEG, ALLEEG, 'datatype', 'spontaneous',...
 'avgref', 1, ...
 'normalise', 1, ... % or 0
@@ -697,95 +803,10 @@ for i = num_sub+2:num_sub+1+num_vid
     [ALLEEG, EEG, CURRENTSET] = pop_newset(ALLEEG, EEG, CURRENTSET, 'retrieve', i, 'study', 0);
     eeglab redraw
     
-    labels = EEG.microstate.fit.labels;
-    csvwrite(char(strcat('/home/matlab/Desktop/labels/microstate_', string(i), '.csv')), labels);
+    % labels = EEG.microstate.fit.labels;
+    % csvwrite(char(strcat('/home/matlab/Desktop/labels/microstate_', string(i), '.csv')), labels);
+    
+    data = EEG.microstate.stats;
+    csvwrite(char(strcat('/home/matlab/Desktop/labels/microstate_', string(i), '_stats.csv')), data);
 
 end
-
-
-
-
-
-
-
-
-
-%% Statistical Analysis Old
-
-files = dir('/data2/Projects/Jake_matlab/data_20/');
-
-for folder = 1:length
-    
-    ['/data2/Projects/Jake_matlab/data_20/' folder.name '/results/RestingState/gip_RestingState.mat']
-    
-end
-
-%% Older Toolbox
-
-for i=83:size(EID, 1)
-% for i=1:5
-    
-    sub=EID(i,:);
-    files = dir(['/home/matlab/Downloads/eeglab14_1_2b/automagic_103_hbn_103_results/' sub]);
-    load(['/home/matlab/Downloads/eeglab14_1_2b/automagic_103_hbn_103_results/' sub '/' files(4).name])
-    [EEG.event.latency] = EEG.event.sample; EEG.event = orderfields(EEG.event,[1:1,8,2:7]); EEG.event = rmfield(EEG.event,'sample');
-    EEG = pop_epoch(EEG, {'30 '}, [0 20]);
-    EEG = pop_resample(EEG, 125);
-    [ALLEEG, EEG, CURRENTSET] = eeg_store( ALLEEG, EEG, 0);
-    eeglab redraw
-    
-end
-
-num_sub = i;
-
-[EEG, ALLEEG] = pop_micro_selectdata( EEG, ALLEEG, 'datatype', 'spontaneous',...
-'avgref', 1, ...
-'normalise', 1, ...
-'MinPeakDist', 30, ...
-'Npeaks', 1000, ...
-'GFPthresh', 3, ...
-'dataset_idx', 1:num_sub);
-
-[ALLEEG, EEG] = eeg_store(ALLEEG, EEG, CURRENTSET);
-eeglab redraw
-
-[ALLEEG, EEG, CURRENTSET] = pop_newset(ALLEEG, EEG, i, 'retrieve', i+1, 'study', 0);
-eeglab redraw
-
-EEG = pop_micro_segment( EEG, 'algorithm', 'modkmeans', ...
-'sorting', 'Global explained variance', ...
-'Nmicrostates', 4:8, ...
-'verbose', 1, ...
-'normalise', 1, ...
-'Nrepetitions', 50, ...
-'max_iterations', 1000, ...
-'threshold', 1e-06, ...
-'fitmeas', 'CV',...
-'optimised',1);
-
-[ALLEEG, EEG] = eeg_store(ALLEEG, EEG, CURRENTSET);
-
-figure;MicroPlotTopo( EEG, 'plot_range', [] );
-
-EEG = pop_micro_selectNmicro( EEG);
-[ALLEEG, EEG] = eeg_store(ALLEEG, EEG, CURRENTSET);
-
-for i = 1:num_sub
-
-    fprintf('Importing prototypes and backfitting for dataset %i\n',i)
-    [ALLEEG, EEG, CURRENTSET] = pop_newset(ALLEEG, EEG, CURRENTSET,'retrieve',i,'study',0);
-    EEG = pop_micro_import_proto( EEG, ALLEEG, num_sub+1);
-
-    EEG = pop_micro_fit( EEG, 'polarity', 0 );
-
-    EEG = pop_micro_smooth( EEG, 'label_type', 'backfit', ...
-    'smooth_type', 'reject segments', ...
-    'minTime', 30, ...
-    'polarity', 0 );
-
-    EEG = pop_micro_stats( EEG, 'label_type', 'backfit', ...
-    'polarity', 0 );
-    [ALLEEG, EEG] = eeg_store(ALLEEG, EEG, CURRENTSET);
-
-end
-
